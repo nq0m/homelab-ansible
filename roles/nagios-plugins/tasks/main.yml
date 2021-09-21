@@ -4,6 +4,7 @@
   ansible.builtin.dnf:
     name: "nagios-plugins-all"
     state: latest
+    enablerepo: "epel-testing"
   when: ansible_distribution == 'AlmaLinux'
 
 - name: Create group for user nagcheck
