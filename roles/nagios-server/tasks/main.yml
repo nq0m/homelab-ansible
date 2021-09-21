@@ -1,0 +1,7 @@
+---
+# tasks file for nagios-server
+- name: Install nagios - AlmaLinux
+  ansible.builtin.dnf:
+    name: "nagios"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
