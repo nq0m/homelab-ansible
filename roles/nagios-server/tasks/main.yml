@@ -5,3 +5,93 @@
     name: "nagios"
     state: latest
   when: ansible_distribution == 'AlmaLinux'
+
+- name: Install nagios.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: nagios.cfg
+    dest: /etc/nagios/nagios.cfg
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Nagios
+
+- name: Install cgi.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: cgi.cfg
+    dest: /etc/nagios/cgi.cfg
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Nagios
+
+- name: Install resource.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: resource.cfg
+    dest: /etc/nagios/private/resource.cfg
+    owner: root
+    group: root
+    mode: 0640
+  notify:
+    - Restart Nagios
+
+- name: Install Nagios SSH Public Key file - AlmaLinux
+  ansible.builtin.copy:
+    src: nagios-pubkey
+    dest: /etc/nagios/private/nagios.pub
+    owner: nagios
+    group: nagios
+    mode: 0644
+
+- name: Install Nagios SSH Private Key file - AlmaLinux
+  ansible.builtin.copy:
+    src: nagios-privkey
+    dest: /etc/nagios/private/nagios
+    owner: nagios
+    group: nagios
+    mode: 0600
+
+- name: Install Nagios password file - AlmaLinux
+  ansible.builtin.copy:
+    src: htpasswd.users
+    dest: /etc/nagios/private/htpasswd
+    owner: nagios
+    group: apache
+    mode: 0640
+
+- name: Install Nagios contacts.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: contacts.cfg
+    dest: /etc/nagios/objects/contacts.cfg
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Nagios
+
+- name: Install Nagios commands.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: commands.cfg
+    dest: /etc/nagios/objects/commands.cfg
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart Nagios
+
+- name: Install Nagios conf.d files - AlmaLinux
+  ansible.builtin.copy:
+    src: conf.d
+    dest: /etc/nagios
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - Restart Nagios
+
+- name: Start Nagios service - AlmaLinux
+  ansible.builtin.service:
+    name: nagios
+    state: stopped
+    enabled: no
