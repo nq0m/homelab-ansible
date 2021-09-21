@@ -1,0 +1,28 @@
+---
+# tasks file for nagios-plugins
+- name: Install nagios-plugins-all - AlmaLinux
+  ansible.builtin.dnf:
+    name: "nagios-plugins-all"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Create group for user nagcheck
+  ansible.builtin.group:
+    name: nagcheck
+    state: present
+    gid: 1002
+
+- name: Create user nagcheck
+  ansible.builtin.user:
+    name: nagcheck
+    group: nagcheck
+    shell: /bin/bash
+    create_home: yes
+    password_lock: yes
+    uid: 1002
+
+- name: Install WSL key for user ansible
+  ansible.posix.authorized_key:
+    user: ansible
+    state: present
+    key: "{{ lookup('file', 'files/nagios-pubkey') }}"
