@@ -14,7 +14,7 @@
     group: root
     mode: 0644
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Install cgi.cfg file - AlmaLinux
   ansible.builtin.copy:
@@ -24,7 +24,7 @@
     group: root
     mode: 0644
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Install resource.cfg file - AlmaLinux
   ansible.builtin.copy:
@@ -34,7 +34,7 @@
     group: root
     mode: 0640
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Install Nagios SSH Public Key file - AlmaLinux
   ansible.builtin.copy:
@@ -68,7 +68,7 @@
     group: root
     mode: 0644
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Install Nagios commands.cfg file - AlmaLinux
   ansible.builtin.copy:
@@ -78,7 +78,7 @@
     group: root
     mode: 0644
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Install Nagios conf.d files - AlmaLinux
   ansible.builtin.copy:
@@ -88,7 +88,7 @@
     group: root
     mode: 0755
   notify:
-    - Restart Nagios
+    - Reload Nagios
 
 - name: Start Nagios service - AlmaLinux
   ansible.builtin.service:
