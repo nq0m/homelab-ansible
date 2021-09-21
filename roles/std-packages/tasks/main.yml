@@ -1,0 +1,25 @@
+---
+# tasks file for std-packages
+- name: Install epel-release - AlmaLinux
+  ansible.builtin.dnf:
+    name: "epel-release"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install net-tools - AlmaLinux
+  ansible.builtin.dnf:
+    name: "net-tools"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install git - AlmaLinux
+  ansible.builtin.dnf:
+    name: "git"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install htop - AlmaLinux
+  ansible.builtin.dnf:
+    name: "htop"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'

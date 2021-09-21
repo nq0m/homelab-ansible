@@ -1,0 +1,88 @@
+---
+- name: Bootstrap Alma Linux server for future ansible runs
+  hosts: '{{ hosts }}'
+  remote_user: "root"
+
+  tasks:
+  - name: Update all packages
+    ansible.builtin.dnf:
+      name: "*"
+      state: latest
+
+  - name: Install zsh
+    ansible.builtin.dnf:
+      name: zsh
+      state: latest
+
+  - name: Create group for user jeremy
+    ansible.builtin.group:
+      name: jeremy
+      state: present
+      gid: 1000
+
+  - name: Create user jeremy
+    ansible.builtin.user:
+      name: jeremy
+      group: jeremy
+      shell: /usr/bin/zsh
+      create_home: yes
+      password: "$6$oVg2p2TjVFOfJ$GiwUcwd.z.JAVZQ4PGR.w0yiM.fA5qBUWbbewbCMjSIQV4ZzfpOh0lu4esaxiu9.4PJPfa5mp.dUXFT9VFFI10"
+      uid: 1000
+
+  - name: Install WSL key for user jeremy
+    ansible.posix.authorized_key:
+      user: jeremy
+      state: present
+      key: "{{ lookup('file', 'bootstrap-files/wsl-ssh-key') }}"
+
+  - name: Install Putty key for user jeremy
+    ansible.posix.authorized_key:
+      user: jeremy
+      state: present
+      key: "{{ lookup('file', 'bootstrap-files/jeremy-putty-key') }}"
+
+  - name: Add user jeremy to sudo
+    ansible.builtin.copy:
+      src: bootstrap-files/jeremy-sudo
+      dest: /etc/sudoers.d/jeremy
+      owner: root
+      group: root
+      mode: 0400
+
+  - name: Create group for user ansible
+    ansible.builtin.group:
+      name: ansible
+      state: present
+      gid: 1001
+
+  - name: Create user ansible
+    ansible.builtin.user:
+      name: ansible
+      group: ansible
+      shell: /bin/bash
+      create_home: yes
+      password_lock: yes
+      uid: 1001
+
+  - name: Install WSL key for user ansible
+    ansible.posix.authorized_key:
+      user: ansible
+      state: present
+      key: "{{ lookup('file', 'bootstrap-files/wsl-ssh-key') }}"
+
+  - name: Install AWX key for user ansible
+    ansible.posix.authorized_key:
+      user: ansible
+      state: present
+      key: "{{ lookup('file', 'bootstrap-files/awx-ssh-key') }}"
+
+  - name: Add user ansible to sudo
+    ansible.builtin.copy:
+      src: bootstrap-files/ansible-sudo
+      dest: /etc/sudoers.d/ansible
+      owner: root
+      group: root
+      mode: 0400
+
+  - name: Reboot after bootstrap
+    reboot:

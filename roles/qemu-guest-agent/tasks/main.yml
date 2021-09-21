@@ -1,0 +1,13 @@
+---
+# tasks file for qemu-guest-agent
+- name: Install qemu-guest-agent - AlmaLinux
+  ansible.builtin.dnf:
+    name: "qemu-guest-agent"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Start qemu-guest-agent - AlmaLinux
+  ansible.builtin.service:
+    name: qemu-guest-agent
+    state: started
+    enabled: yes
