@@ -3,6 +3,7 @@
   roles:
     - std-packages
     - nagios-plugins
+    - jobs-dir
 
 - hosts: proxmoxvms
   roles:
