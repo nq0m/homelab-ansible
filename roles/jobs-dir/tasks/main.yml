@@ -1,6 +1,6 @@
 ---
 # tasks file for jobs-dir
-- name: Create /jobs directorhy
+- name: Create /jobs directory
   ansible.builtin.file:
     path: /jobs
     state: directory
