@@ -13,3 +13,4 @@
   roles:
     - nagios-server
     - lego-ssl
+    - apache

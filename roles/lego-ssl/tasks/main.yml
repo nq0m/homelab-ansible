@@ -21,7 +21,9 @@
     mode: 0755
 
 - name: Install the lego binary
-  ansible.builtin.shell: "cp /tmp/lego /srv/certs/lego"
+  ansible.builtin.command: "cp /tmp/lego /srv/certs/lego"
+  args:
+    creates: /srv/certs/lego
 
 - name: Ensure permissions on lego binary are correct
   ansible.builtin.file:

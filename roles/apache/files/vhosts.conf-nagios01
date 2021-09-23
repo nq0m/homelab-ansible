@@ -11,8 +11,8 @@ SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"
 
 <VirtualHost *:443>
     SSLEngine on
-    SSLCertificateFile      /path/to/signed_cert_and_intermediate_certs
-    SSLCertificateKeyFile   /path/to/private_key
+    SSLCertificateFile      /srv/certs/.lego/certificates/nagios.servers.test-net.work.crt
+    SSLCertificateKeyFile   /srv/certs/.lego/certificates/nagios.servers.test-net.work.key
 
     # enable HTTP/2, if available
     Protocols h2 http/1.1
