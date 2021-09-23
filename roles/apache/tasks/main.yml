@@ -1,0 +1,37 @@
+---
+# tasks file for apache
+- name: Install Apache - AlmaLinux
+  ansible.builtin.dnf:
+    name: "httpd"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install mod_ssl - AlmaLinux
+  ansible.builtin.dnf:
+    name: "mod_ssl"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install nagios.cfg file - AlmaLinux
+  ansible.builtin.copy:
+    src: vhosts.conf-{{ ansible_hostname }}
+    dest: /etc/httpd/conf.d/vhosts.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload Apache
+
+- name: Install nagios.txt file to default docroot - AlmaLinux
+  ansible.builtin.copy:
+    src: nagios.txt
+    dest: /var/www/html/nagios.txt
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start Apache - AlmaLinux
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes

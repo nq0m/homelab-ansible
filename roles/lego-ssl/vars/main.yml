@@ -1,0 +1,10 @@
+---
+# vars file for lego-ssl
+_arch_map:
+  x86_64: amd64
+  armv7l: arm
+
+arch: '{{ ansible_architecture }}'
+lego_version: 4.4.0
+lego_dl_file: 'lego_{{ lego_version }}_linux_{{ _arch_map[arch] }}.tar.gz'
+lego_dl_url: 'https://github.com/go-acme/lego/releases/download/v{{ restic_version }}/{{ lego_dl_file }}'
