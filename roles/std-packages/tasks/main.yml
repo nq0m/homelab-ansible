@@ -23,3 +23,9 @@
     name: "htop"
     state: latest
   when: ansible_distribution == 'AlmaLinux'
+
+- name: Install tar - AlmaLinux
+  ansible.builtin.dnf:
+    name: "tar"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
