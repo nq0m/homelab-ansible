@@ -31,7 +31,7 @@
     src: resource.cfg
     dest: /etc/nagios/private/resource.cfg
     owner: root
-    group: root
+    group: nagios
     mode: 0640
   notify:
     - Reload Nagios
