@@ -42,3 +42,4 @@
   ansible.builtin.command: "/srv/certs/issue.sh"
   args:
     chdir: /srv/certs
+    creates: /srv/certs/.lego/certificates
