@@ -1,7 +1,7 @@
 ---
 # tasks file for lego-ssl
 - name: Download lego tarball
-  ansible.builtin_get_url:
+  ansible.builtin.get_url:
     url: '{{ lego_dl_url }}'
     dest: '/tmp/lego.tar.gz'
     force: true
