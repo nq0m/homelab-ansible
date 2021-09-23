@@ -1,6 +1,6 @@
 ---
 # handlers file for apache
-- name: Reload Nagios
+- name: Reload Apache
   ansible.builtin.service:
     name: httpd
     state: restarted
