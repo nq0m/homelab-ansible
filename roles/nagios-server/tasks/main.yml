@@ -93,7 +93,15 @@
 - name: Install slack_nagios.pl script - AlmaLinux
   ansible.builtin.copy:
     src: slack_nagios.pl
-    dest: /usr/local/bin
+    dest: /usr/local/bin/slack_nagios.pl
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install notify-by-pushover.php script - AlmaLinux
+  ansible.builtin.copy:
+    src: notify-by-pushover.php
+    dest: /usr/local/bin/notify-by-pushover.php
     owner: root
     group: root
     mode: 0755
