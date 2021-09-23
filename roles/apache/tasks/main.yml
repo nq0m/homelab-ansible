@@ -12,7 +12,7 @@
     state: latest
   when: ansible_distribution == 'AlmaLinux'
 
-- name: Install nagios.cfg file - AlmaLinux
+- name: Install apache vhosts.conf file - AlmaLinux
   ansible.builtin.copy:
     src: vhosts.conf-{{ ansible_hostname }}
     dest: /etc/httpd/conf.d/vhosts.conf
