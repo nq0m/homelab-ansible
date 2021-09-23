@@ -90,6 +90,14 @@
   notify:
     - Reload Nagios
 
+- name: Install slack_nagios.pl script - AlmaLinux
+  ansible.builtin.copy:
+    src: slack_nagios.pl
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Start Nagios service - AlmaLinux
   ansible.builtin.service:
     name: nagios
