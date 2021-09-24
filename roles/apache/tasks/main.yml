@@ -22,6 +22,16 @@
   notify:
     - Reload Apache
 
+- name: Install apache ssl.conf file - AlmaLinux
+  ansible.builtin.copy:
+    src: ssl.conf
+    dest: /etc/httpd/conf.d/ssl.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload Apache
+
 - name: Install nagios.txt file to default docroot - AlmaLinux
   ansible.builtin.copy:
     src: nagios.txt
