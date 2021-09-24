@@ -82,7 +82,11 @@
       dest: /etc/sudoers.d/ansible
       owner: root
       group: root
-      mode: 0400
+      mode: 
+      
+  - name: Disable SELinux
+    ansible.posix.selinux:
+      state: disabled
 
   - name: Reboot after bootstrap
     reboot:
