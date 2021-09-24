@@ -117,5 +117,5 @@
 - name: Start Nagios service - AlmaLinux
   ansible.builtin.service:
     name: nagios
-    state: stopped
-    enabled: no
+    state: started
+    enabled: yes
