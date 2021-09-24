@@ -24,6 +24,6 @@
 
 - name: Install WSL key for user ansible
   ansible.posix.authorized_key:
-    user: ansible
+    user: nagcheck
     state: present
     key: "{{ lookup('file', 'files/nagios-pubkey') }}"
