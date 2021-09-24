@@ -4,6 +4,7 @@
     - std-packages
     - nagios-plugins
     - jobs-dir
+    - chrony
 
 - hosts: proxmoxvms
   roles:
