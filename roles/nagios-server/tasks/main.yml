@@ -106,6 +106,14 @@
     group: root
     mode: 0755
 
+- name: Install Nagios apache configuration - AlmaLinux
+  ansible.builtin.copy:
+    src: nagios-httpd.conf
+    dest: /etc/httpd/conf.d/nagios.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Start Nagios service - AlmaLinux
   ansible.builtin.service:
     name: nagios
