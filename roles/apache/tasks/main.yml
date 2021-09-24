@@ -35,12 +35,14 @@
     service: http
     permanent: yes
     state: enabled
+    zone: public
 
 - name: Open Firewall port 443
   ansible.posix.firewalld:
     service: https
     permanent: yes
     state: enabled
+    zone: public
 
 - name: Start Apache - AlmaLinux
   ansible.builtin.service:
