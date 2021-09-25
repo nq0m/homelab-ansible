@@ -38,7 +38,31 @@
     dest: /srv/certs/issue.sh
     owner: root
     group: root
-    mode: 0755
+    mode: 0700
+
+- name: Install Certificate renewal script
+  ansible.builtin.copy:
+    src: cert-renew.sh-{{ ansible_hostname }}
+    dest: /srv/certs/cert-renew.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Install Certificate renewal hook
+  ansible.builtin.copy:
+    src: renew-hook.sh-{{ ansible_hostname }}
+    dest: /srv/certs/renew-hook.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Install Certificate renewal cron job
+  ansible.builtin.copy:
+    src: cert-renew-cron-{{ ansible_hostname }}
+    dest: /etc/cron.d/cert-renew
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Issue certificate
   ansible.builtin.command: "/srv/certs/issue.sh"
