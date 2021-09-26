@@ -1,0 +1,46 @@
+---
+# tasks file for restic
+- name: Download Restic
+  ansible.builtin.get_url:
+    url: '{{ restic_dl_url }}'
+    dest: /tmp/restic.bz2
+    force: true
+  register: get_url_restic
+
+- name: Decompress the Restic binary
+  ansible.builtin.shell: "bzip2 -dc {{ get_url_restic.dest }} > /usr/local/bin/restic"
+  args:
+    creates: '/usr/local/bin/restic'
+
+- name: Ensure permissions on restic binary are correct
+  ansible.builtin.file:
+    path: '/usr/local/bin/restic'
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Install backup script
+  ansible.builtin.copy:
+    src: backup_script.sh
+    dest: /jobs/backup_script.sh
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Install backup exclusions file
+  ansible.builtin.copy:
+    src: backup_excludes-{{ ansible_hostname }}
+    dest: /jobs/backup_excludes
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Setup Cron job for running backup
+  ansible.builtin.cron:
+    minute: 0
+    hour: 2
+    weekday: 1
+    job: "/jobs/backup_server.sh > /dev/null 2>&1"
+    cron_file: 'backup_server'
+    user: root
+    name: backup_server
