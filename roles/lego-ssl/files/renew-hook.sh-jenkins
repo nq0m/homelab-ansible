@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Restart haproxy container to put new certs live
+
+/usr/bin/podman --signal HUP jenkins_haproxy_1

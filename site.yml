@@ -11,10 +11,13 @@
   roles:
     - qemu-guest-agent
 
+- hosts: lego
+  roles:
+    - lego-ssl
+
 - hosts: nagios
   roles:
     - nagios-server
-    - lego-ssl
     - apache
 
 - hosts: podman
