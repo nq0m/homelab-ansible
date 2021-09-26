@@ -35,3 +35,9 @@
     name: "bzip2"
     state: latest
   when: ansible_distribution == 'AlmaLinux'
+
+- name: Install rsync - AlmaLinux
+  ansible.builtin.dnf:
+    name: "rsync"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
