@@ -5,6 +5,6 @@ _arch_map:
   armv7l: arm
 
 arch: '{{ ansible_architecture }}'
-resetic_version: 0.12.1
+restic_version: 0.12.1
 restic_dl_file: 'restic_{{ restic_version }}_linux_{{ _arch_map[arch] }}.bz2'
 restic_dl_url: 'https://github.com/restic/restic/releases/download/v{{ restic_version }}/{{ restic_dl_file }}'
