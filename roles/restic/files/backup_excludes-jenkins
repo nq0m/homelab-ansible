@@ -2,3 +2,4 @@
 /proc
 /sys
 /run
+/var/lib/containers
