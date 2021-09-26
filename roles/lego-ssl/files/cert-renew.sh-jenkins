@@ -10,5 +10,6 @@ cd /srv/certs/
   --domains jenkins.servers.test-net.work \
   --dns cloudflare \
   --dns.resolvers 1.1.1.1:53 \
+  --pem \
   renew \
   --renew-hook="./renew-hook.sh"
