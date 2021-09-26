@@ -40,20 +40,6 @@
     group: root
     mode: 0644
 
-- name: Open Firewall port 80
-  ansible.posix.firewalld:
-    service: http
-    permanent: yes
-    state: enabled
-    zone: public
-
-- name: Open Firewall port 443
-  ansible.posix.firewalld:
-    service: https
-    permanent: yes
-    state: enabled
-    zone: public
-
 - name: Start Apache - AlmaLinux
   ansible.builtin.service:
     name: httpd

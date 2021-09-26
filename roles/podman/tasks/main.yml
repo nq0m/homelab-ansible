@@ -1,0 +1,27 @@
+---
+# tasks file for podman
+- name: Install Podman - AlmaLinux
+  ansible.builtin.dnf:
+    name: "podman"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install Podman-Docker - AlmaLinux
+  ansible.builtin.dnf:
+    name: "podman-docker"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install Docker-Compose
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compse
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Start Podman Socket - AlmaLinux
+  ansible.builtin.service:
+    name: podman.socket
+    state: started
+    enabled: yes
