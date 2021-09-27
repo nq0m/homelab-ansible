@@ -1,0 +1,2 @@
+#Check cert for renewal daily at midnight
+0 0 * * * root /srv/certs/cert-renew.sh > /dev/null 2>&1
