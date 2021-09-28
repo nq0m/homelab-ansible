@@ -41,3 +41,15 @@
     name: "rsync"
     state: latest
   when: ansible_distribution == 'AlmaLinux'
+
+- name: Install wget - AlmaLinux
+  ansible.builtin.dnf:
+    name: "wget"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install curl - AlmaLinux
+  ansible.builtin.dnf:
+    name: "curl"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
