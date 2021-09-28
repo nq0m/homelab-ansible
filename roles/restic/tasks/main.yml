@@ -39,7 +39,7 @@
   ansible.builtin.cron:
     minute: 0
     hour: 2
-    weekday: 1
+    weekday: 3
     job: "/jobs/backup_server.sh > /dev/null 2>&1"
     cron_file: 'backup_server'
     user: root
