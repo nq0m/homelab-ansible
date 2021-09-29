@@ -40,7 +40,7 @@
     minute: 0
     hour: 2
     weekday: 3
-    job: "/jobs/backup_server.sh > /dev/null 2>&1"
+    job: "/jobs/backup_script.sh > /tmp/backup.tmp 2>&1"
     cron_file: 'backup_server'
     user: root
     name: backup_server
