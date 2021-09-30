@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+export CLOUDFLARE_DNS_API_TOKEN=LGK99Z1zmdcv_cTn7tuNanjTaZjFpZEEOat6dVtv
+
+cd /srv/certs/
+
+./lego \
+  --email jutley@utleycomputerconsulting.com \
+  --accept-tos \
+  --domains pihole-1.servers.test-net.work \
+  --domains pihole.servers.test-net.work \
+  --domains pdns-admin.servers.test-net.work \
+  --dns cloudflare \
+  --dns.resolvers 1.1.1.1:53 \
+  --pem \
+  renew \
+  --renew-hook="./renew-hook.sh"
