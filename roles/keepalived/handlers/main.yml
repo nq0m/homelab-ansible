@@ -1,6 +1,6 @@
 ---
 # handlers file for keepalived
-- name: Reload keepalived
+- name: Reload Keepalived
   ansible.builtin.service:
     name: keepalived
     state: restarted
