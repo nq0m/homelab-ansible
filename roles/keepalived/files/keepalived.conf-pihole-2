@@ -1,0 +1,14 @@
+vrrp_instance dns {
+        interface ens18
+        state BACKUP
+        priority 200
+        virtual_router_id 1
+        advert_int 1
+        authentication {
+                auth_type PASS
+                auth_pass foobar
+        }
+        virtual_ipaddress {
+                172.17.20.41
+                172.17.20.42
+        }

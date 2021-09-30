@@ -1,0 +1,32 @@
+---
+# tasks file for keepalived
+- name: Enable non-local binding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+    sysctl_file: /etc/sysctl.d/98-ip-nonlocal-bind.conf
+    sysctl_set: yes
+    reload: yes
+
+- name: Install Keepalived - AlmaLinux
+  ansible.builtin.dnf:
+    name: "keepalived"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Install keepalived.conf  - AlmaLinux
+  ansible.builtin.copy:
+    src: keepalived.conf-{{ ansible_hostname }}
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload Keepalived
+
+- name: Start keepalived - AlmaLinux
+  ansible.builtin.service:
+    name: keepalived
+    state: started
+    enabled: yes

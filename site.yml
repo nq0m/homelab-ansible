@@ -23,3 +23,7 @@
 - hosts: podman
   roles:
     - podman
+
+- hosts: pihole
+  roles:
+    - keepalived
