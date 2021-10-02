@@ -1,17 +1,22 @@
 ---
 # tasks file for backups
-- name: Ensure permissions on restic binary are correct
-  ansible.builtin.file:
-    path: '/usr/local/bin/restic'
-    state: absent
+- name: Install borgbackup and nfs utilities - AlmaLinux
+  ansible.builtin.dnf:
+    name: 
+      - nfs-utils
+      - nfs4-acl-tools
+      - borgbackup
+    state: latest
+    enablerepo: powertools
+  when: ansible_distribution == 'AlmaLinux'
 
-#- name: Install backup script
-#  ansible.builtin.copy:
-#    src: backup_script.sh
-#    dest: /jobs/backup_script.sh
-#    owner: root
-#    group: root
-#    mode: 0700
+- name: Install backup script
+  ansible.builtin.copy:
+    src: backup_script.sh
+    dest: /jobs/backup_script.sh
+    owner: root
+    group: root
+    mode: 0700
 
 - name: Install backup exclusions file
   ansible.builtin.copy:
