@@ -28,7 +28,7 @@
 
 - name: Setup Cron job for running backup
   ansible.builtin.cron:
-    minute: 0
+    minute: 15
     hour: 19
     job: "/jobs/backup_script.sh > /tmp/backup.tmp 2>&1"
     cron_file: 'backup_server'
