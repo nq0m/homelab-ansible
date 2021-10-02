@@ -29,7 +29,7 @@ else
 fi
 
 #Run restic to perform the backup
-/usr/bin/borg create --exclude-from /jobs/backup_excludes --list -s ::${myHOSTNAME}-${myDATE} / >> $LOG_FILE
+/usr/bin/borg create --exclude-from /jobs/backup_excludes --list -s ::${myHOSTNAME}-${myDATE} / 2>> $LOG_FILE
 
 # One backup is completed, umount the NFS
 /usr/bin/umount /backups
