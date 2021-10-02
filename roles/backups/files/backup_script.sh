@@ -20,7 +20,7 @@ startTime=`date +%Y-%m-%d\ %H:%M`
 /usr/bin/mount -t nfs 172.17.10.30:/nfs/LinuxBackups /backups
 
 #Did we successfully mount the NFS share?
-if [ -d "${BORG_REPO}"]
+if [ -d "${BORG_REPO}" ]
 then
   echo "NFS successfully mounted to /backups!" >> $LOG_FILE
 else
@@ -34,7 +34,7 @@ fi
 # One backup is completed, umount the NFS
 /usr/bin/umount /backups
 
-if [ ! -d "${BORG_REPO}"]
+if [ ! -d "${BORG_REPO}" ]
 then
   echo "NFS successfully unmounted!" >> $LOG_FILE
   /usr/bin/rmdir /backups
