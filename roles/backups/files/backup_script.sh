@@ -28,8 +28,9 @@ else
   exit 1
 fi
 
-#Run restic to perform the backup
-/usr/bin/borg create --exclude-from /jobs/backup_excludes --list -s ::${myHOSTNAME}-${myDATE} / 2>> $LOG_FILE
+#Run borg to perform the backup
+#Wait 30 minutes for lock
+/usr/bin/borg create --exclude-from /jobs/backup_excludes --list -s --lock-wait 1800 ::${myHOSTNAME}-${myDATE} / 2>> $LOG_FILE
 
 # One backup is completed, umount the NFS
 /usr/bin/umount /backups

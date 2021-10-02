@@ -29,10 +29,8 @@
 - name: Setup Cron job for running backup
   ansible.builtin.cron:
     minute: 0
-    hour: 2
-    weekday: 5
+    hour: 19
     job: "/jobs/backup_script.sh > /tmp/backup.tmp 2>&1"
     cron_file: 'backup_server'
     user: root
     name: backup_server
-    disabled: yes
