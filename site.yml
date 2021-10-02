@@ -5,7 +5,7 @@
     - nagios-plugins
     - jobs-dir
     - chrony
-    - restic
+    - backups
 
 - hosts: proxmoxvms
   roles:
