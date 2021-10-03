@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+export CLOUDFLARE_DNS_API_TOKEN=LGK99Z1zmdcv_cTn7tuNanjTaZjFpZEEOat6dVtv
+
+cd /srv/certs/
+
+./lego \
+  --email jutley@utleycomputerconsulting.com \
+  --accept-tos \
+  --domains docker.servers.test-net.work \
+  --domains portal.servers.test-net.work \
+  --domains portal2.servers.test-net.work \
+  --domains dashboard.servers.test-net.work \
+  --dns cloudflare \
+  --dns.resolvers 1.1.1.1:53 \
+  --pem \
+  renew \
+  --renew-hook="./renew-hook.sh"
