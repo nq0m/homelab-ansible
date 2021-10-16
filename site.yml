@@ -27,3 +27,7 @@
 - hosts: pihole
   roles:
     - keepalived
+
+- hosts: plex
+  roles:
+    - plex-mounts
