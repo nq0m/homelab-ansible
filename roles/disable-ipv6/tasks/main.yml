@@ -23,6 +23,6 @@
     name: net.ipv6.conf.ens18.disable_ipv6
     value: 1
     state: present
-    sysctl_file: /etc/sysctl.d/97-ipv6-autoconf.conf
+    sysctl_file: /etc/sysctl.d/97-ipv6-disable.conf
     sysctl_set: yes
     reload: yes
