@@ -41,6 +41,12 @@
       state: present
       key: "{{ lookup('file', 'bootstrap-files/jeremy-putty-key') }}"
 
+  - name: Install Linux key for user jeremy
+    ansible.posix.authorized_key:
+      user: jeremy
+      state: present
+      key: "{{ lookup('file', 'bootstrap-files/jeremy-linux-key') }}"
+
   - name: Add user jeremy to sudo
     ansible.builtin.copy:
       src: bootstrap-files/jeremy-sudo
