@@ -1,0 +1,23 @@
+---
+# tasks file for mediatools-mounts
+- name: Install NFS Utilities
+  ansible.builtin.dnf:
+    name: "nfs-utils"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: Mount NFS Storage from Unraid
+  ansible.posix.mount:
+    path: /storage/media
+    src: 172.17.20.11:/mnt/user/media
+    fstype: nfs
+    opts: auto,nofail,noatime,nolock,intr,tcp,actimeo=1800
+    state: mounted
+
+- name: Mount Torrent storage
+  ansible.posix.mount:
+    path: /torrents
+    src: /dev/torrents/storage
+    fstype: xfs
+    opts: noatime,nodiratime
+    state: mounted
