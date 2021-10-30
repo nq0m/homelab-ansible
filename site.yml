@@ -5,6 +5,7 @@
     - nagios-plugins
     - jobs-dir
     - chrony
+    - ohmyzsh
 
 - hosts: backups
   roles:
