@@ -39,3 +39,4 @@
 - hosts: mediatools
   roles:
     - disable-ipv6
+    - mediatools-mounts
