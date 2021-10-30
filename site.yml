@@ -5,6 +5,9 @@
     - nagios-plugins
     - jobs-dir
     - chrony
+
+- hosts: backups
+  roles:
     - backups
 
 - hosts: proxmoxvms
