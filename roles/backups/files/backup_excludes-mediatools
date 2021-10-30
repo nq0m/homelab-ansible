@@ -3,3 +3,5 @@
 /sys
 /run
 /var/lib/containers
+/storage
+/torrents
