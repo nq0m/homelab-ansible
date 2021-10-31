@@ -12,13 +12,24 @@
 
 - name: Cloning oh-my-zsh
   ansible.builtin.git:
-    repo=https://github.com/robbyrussell/oh-my-zsh
-    dest=/home/jeremy/.oh-my-zsh
+    repo: https://github.com/robbyrussell/oh-my-zsh
+    dest: /home/jeremy/.oh-my-zsh
   when: not stat_oh_my_zsh_result.stat.exists
+
+- name: Setting ownership of .oh-my-zsh
+  ansible.builtin.file:
+    path: /home/jeremy/.oh-my-zsh
+    state: directory
+    owner: jeremy
+    group: jeremy
+    recurse: yes
 
 - name: Creating new .zshrc
   ansible.builtin.copy:
-    src=/home/jeremy/.oh-my-zsh/templates/zshrc.zsh-template
-    dest=/home/jeremy/.zshrc
-    remote_src=yes
+    src: /home/jeremy/.oh-my-zsh/templates/zshrc.zsh-template
+    dest: /home/jeremy/.zshrc
+    remote_src: yes
+    owner: jeremy
+    group: jeremy
+    mode: 0644
   when: not stat_rc_result.stat.exists
