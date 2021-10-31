@@ -18,6 +18,6 @@
 
 - name: Creating new .zshrc
   ansible.builtin.copy:
-    src=/home/jeremy/.oh-my-zsh/templates/zshrc.zsh-template
+    remote_src=/home/jeremy/.oh-my-zsh/templates/zshrc.zsh-template
     dest=/home/jeremy/.zshrc
   when: not stat_rc_result.stat.exists
