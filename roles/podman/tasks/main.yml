@@ -25,7 +25,7 @@
     mode: 0755
     owner: root
     group: root
-  when: ansible_distribution == 'x86_64'
+  when: ansible_architecture == 'x86_64'
 
 - name: Install Docker-Compose - aarch64
   ansible.builtin.get_url:
@@ -34,7 +34,7 @@
     mode: 0755
     owner: root
     group: root
-  when: ansible_distribution == 'aarch64'
+  when: ansible_architecture == 'aarch64'
 
 - name: Start Podman Socket - AlmaLinux
   ansible.builtin.service:
