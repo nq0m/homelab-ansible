@@ -18,13 +18,23 @@
     state: latest
   when: ansible_distribution == 'AlmaLinux'
 
-- name: Install Docker-Compose
+- name: Install Docker-Compose - x86_64
   ansible.builtin.get_url:
-    url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+    url: https://github.com/docker/compose/releases/download/v2.1.0/docker-compose-linux-x86_64
     dest: /usr/local/bin/docker-compose
     mode: 0755
     owner: root
     group: root
+  when: ansible_distribution == 'x86_64'
+
+- name: Install Docker-Compose - aarch64
+  ansible.builtin.get_url:
+    url: https://github.com/docker/compose/releases/download/v2.1.0/docker-compose-linux-aarch64
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+    owner: root
+    group: root
+  when: ansible_distribution == 'aarch64'
 
 - name: Start Podman Socket - AlmaLinux
   ansible.builtin.service:
