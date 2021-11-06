@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+export CLOUDFLARE_DNS_API_TOKEN=LGK99Z1zmdcv_cTn7tuNanjTaZjFpZEEOat6dVtv
+
+/srv/certs/lego \
+  --email jutley@utleycomputerconsulting.com \
+  --accept-tos \
+  --domains unifipi.network.test-net.work \
+  --domains unifi-controller.network.test-net.work \
+  --dns cloudflare \
+  --dns.resolvers 1.1.1.1:53 \
+  --pem \
+  run
