@@ -18,10 +18,10 @@
     state: latest
   when: ansible_distribution == 'AlmaLinux'
 
-- name: Install Podman-compose - AlmaLinux
+- name: Remove Podman-compose - AlmaLinux
   ansible.builtin.dnf:
     name: "podman-compose"
-    state: latest
+    state: absent
   when: ansible_distribution == 'AlmaLinux'
 
 - name: Install Docker-Compose
