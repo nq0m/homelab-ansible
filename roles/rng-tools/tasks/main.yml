@@ -5,3 +5,9 @@
     name: "rng-tools"
     state: latest
   when: ansible_distribution == 'AlmaLinux'
+
+- name: Start rngd - AlmaLinux
+  ansible.builtin.service:
+    name: rngd
+    state: started
+    enabled: yes
