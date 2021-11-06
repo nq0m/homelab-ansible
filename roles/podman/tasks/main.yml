@@ -24,9 +24,15 @@
     state: absent
   when: ansible_distribution == 'AlmaLinux'
 
+- name: Remove old version of Docker-Compose
+  ansible.builtin.file:
+    path: /usr/local/bin/docker-compose
+    state: absent
+  when: ansible_distribution == 'AlmaLinux'
+
 - name: Install Docker-Compose
   ansible.builtin.get_url:
-    url: https://github.com/docker/compose/releases/download/v2.1.0/docker-compose-linux-{{ ansible_architecture }}
+    url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-{{ ansible_architecture }}
     dest: /usr/local/bin/docker-compose
     mode: 0755
     owner: root
