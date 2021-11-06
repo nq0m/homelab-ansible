@@ -18,6 +18,12 @@
     state: latest
   when: ansible_distribution == 'AlmaLinux'
 
+- name: Install Podman-compose - AlmaLinux
+  ansible.builtin.dnf:
+    name: "podman-compose"
+    state: latest
+  when: ansible_distribution == 'AlmaLinux'
+
 - name: Install Docker-Compose
   ansible.builtin.get_url:
     url: https://github.com/docker/compose/releases/download/v2.1.0/docker-compose-linux-{{ ansible_architecture }}
