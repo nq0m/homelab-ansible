@@ -40,3 +40,7 @@
   roles:
     - disable-ipv6
     - mediatools-mounts
+
+- hosts: rng-tools
+  roles:
+    - rng-tools
