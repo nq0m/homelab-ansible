@@ -37,6 +37,7 @@
     mode: 0755
     owner: root
     group: root
+  when: ansible_architecture == 'x86_64'
 
 - name: Start Podman Socket - AlmaLinux
   ansible.builtin.service:
