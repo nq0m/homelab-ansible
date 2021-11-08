@@ -6,3 +6,7 @@
 # Restart haproxy container to put new certs live
 
 /usr/bin/podman container kill --signal HUP web_haproxy_1
+
+# Same with nginx container
+
+/usr/bin/podman container kill --signal HUP web_nginx_1
