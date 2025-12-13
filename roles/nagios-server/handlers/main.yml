@@ -1,6 +1,0 @@
----
-# handlers file for nagios-server
-- name: Reload Nagios
-  ansible.builtin.service:
-    name: nagios
-    state: reloaded

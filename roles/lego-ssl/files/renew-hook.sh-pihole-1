@@ -1,8 +1,0 @@
-#!/bin/bash
-
-/usr/bin/cp /srv/certs/.lego/certificates/pihole-1.servers.test-net.work.pem /srv/certs/
-/usr/bin/chown 99.99 /srv/certs/pihole-1.servers.test-net.work.pem
-
-# Restart haproxy container to put new certs live
-
-/usr/bin/podman container kill --signal HUP pihole_haproxy_1

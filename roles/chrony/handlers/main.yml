@@ -1,6 +1,0 @@
----
-# handlers file for chrony
-- name: Reload Chrony
-  ansible.builtin.service:
-    name: chronyd
-    state: restarted

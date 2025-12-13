@@ -1,6 +1,0 @@
-/dev
-/proc
-/sys
-/run
-/var/lib/containers
-/storage

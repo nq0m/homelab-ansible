@@ -1,0 +1,93 @@
+---
+
+# Playbook to bootstrap and configure a local system
+- hosts: localhost
+  connection: local
+  become: true
+  vars:
+    local_user: "{{ lookup('env', 'USER') }}"
+  tasks:
+    - name: Update all packages to latest
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+
+    - name: Install essential packages
+      ansible.builtin.apt:
+        name:
+          - git
+          - vim
+          - zsh
+          - curl
+          - wget
+        state: present
+
+    - name: Ensure vim disables mouse in vimrc.local
+      ansible.builtin.lineinfile:
+        path: /etc/vim/vimrc.local
+        line: 'set mouse-=a'
+        create: yes
+        state: present
+
+    - name: Ensure {{ local_user }} uses zsh
+      ansible.builtin.user:
+        name: "{{ local_user }}"
+        shell: /usr/bin/zsh
+
+    - name: Set up SSH authorized key for {{ local_user }}
+      ansible.builtin.authorized_key:
+        user: "{{ local_user }}"
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEAwMkiwPc3Cq3qpewo3PAc6DhvG1uizTEuDVJ9oA9u"
+
+    - name: OhMyZSH - check if .zshrc exists
+      ansible.builtin.stat:
+        path: /home/{{ local_user }}/.zshrc
+      register: stat_rc_result
+
+    - name: OhMyZSH - check if .oh-my-zsh exists
+      ansible.builtin.stat:
+        path: /home/{{ local_user }}/.oh-my-zsh
+      register: stat_oh_my_zsh_result
+
+    - name: OhMyZSH - cloning repo
+      ansible.builtin.git:
+        repo: https://github.com/ohmyzsh/ohmyzsh
+        dest: /home/{{ local_user }}/.oh-my-zsh
+      when: not stat_oh_my_zsh_result.stat.exists
+
+    - name: OhMyZSH - creating new .zshrc
+      ansible.builtin.copy:
+        src: /home/{{ local_user }}/.oh-my-zsh/templates/zshrc.zsh-template
+        dest: /home/{{ local_user }}/.zshrc
+        remote_src: yes
+        owner: "{{ local_user }}"
+        group: "{{ local_user }}"
+        mode: 0644
+      when: not stat_rc_result.stat.exists
+
+    - name: Create custom OMZ theme file for {{ local_user }}
+      ansible.builtin.copy:
+        dest: "/home/{{ local_user }}/.oh-my-zsh/custom/theme.zsh"
+        content: "ZSH_THEME=agnoster\n"
+        owner: "{{ local_user }}"
+        group: "{{ local_user }}"
+        mode: '0644'
+
+    - name: Ensure ansible user exists with locked password
+      ansible.builtin.user:
+        name: ansible
+        shell: /bin/bash
+        password_lock: true
+
+    - name: Set up SSH authorized key for ansible user
+      ansible.builtin.authorized_key:
+        user: ansible
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEAwMkiwPc3Cq3qpewo3PAc6DhvG1uizTEuDVJ9oA9u"
+
+    - name: Grant ansible user passwordless sudo
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/ansible
+        content: "ansible ALL=(ALL) NOPASSWD:ALL\n"
+        owner: root
+        group: root
+        mode: '0440'

@@ -1,0 +1,17 @@
+---
+# Playbook to install and configure Vim locally
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Ensure Vim is installed
+      ansible.builtin.apt:
+        name: vim
+        state: present
+
+    - name: Ensure vim disables mouse in vimrc.local
+      ansible.builtin.lineinfile:
+        path: /etc/vim/vimrc.local
+        line: 'set mouse-=a'
+        create: yes
+        state: present

@@ -1,0 +1,15 @@
+---
+# Playbook to install Chromium and remove Firefox ESR locally
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Ensure Chromium is installed
+      ansible.builtin.apt:
+        name: chromium
+        state: present
+
+    - name: Ensure Firefox ESR is removed
+      ansible.builtin.apt:
+        name: firefox-esr
+        state: absent

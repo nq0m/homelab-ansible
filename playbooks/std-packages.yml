@@ -1,0 +1,13 @@
+---
+# Playbook to install standard packages on the local machine
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Ensure standard packages are installed
+      ansible.builtin.apt:
+        name:
+          - curl
+          - wget
+          - htop
+        state: present

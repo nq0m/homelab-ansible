@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# Restart apache to put new certs live
-
-/usr/bin/systemctl restart httpd

@@ -1,9 +1,0 @@
----
-# tasks file for jobs-dir
-- name: Create /jobs directory
-  ansible.builtin.file:
-    path: /jobs
-    state: directory
-    owner: root
-    group: root
-    mode: 0755

@@ -1,0 +1,26 @@
+# Ignore Ansible local cache and downloads
+.ansible/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Editor and OS files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python virtual environments
+.venv/
+venv/
+ENV/
+
+# Ansible logs (if any)
+ansible.log
+
+# Ignore local variable or secret files (if you use them)
+local_vars.yml
+*.secret.yml

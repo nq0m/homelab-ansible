@@ -1,0 +1,28 @@
+---
+# Playbook to disable screensaver and DPMS locally
+- hosts: localhost
+  connection: local
+  become: true
+  tasks:
+    - name: Remove xscreensaver package
+      ansible.builtin.apt:
+        name: xscreensaver
+        state: absent
+
+    - name: Disable DPMS and screen blanking in X11
+      ansible.builtin.copy:
+        dest: /etc/X11/xorg.conf.d/10-disable-dpms.conf
+        content: |
+          Section "ServerFlags"
+              Option "BlankTime" "0"
+              Option "StandbyTime" "0"
+              Option "SuspendTime" "0"
+              Option "OffTime" "0"
+          EndSection
+          Section "Monitor"
+              Identifier "Monitor0"
+              Option "DPMS" "false"
+          EndSection
+        owner: root
+        group: root
+        mode: '0644'

@@ -1,0 +1,12 @@
+---
+# Playbook to set up SSH authorized key for the local user
+- hosts: localhost
+  connection: local
+  become: true
+  vars:
+    local_user: "{{ ansible_env.USER }}"
+  tasks:
+    - name: Set up SSH authorized key for {{ local_user }}
+      ansible.builtin.authorized_key:
+        user: "{{ local_user }}"
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICEAwMkiwPc3Cq3qpewo3PAc6DhvG1uizTEuDVJ9oA9u"

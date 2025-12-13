@@ -1,0 +1,13 @@
+---
+
+# Homelab site playbook (Debian)
+- name: Configure kiosk hosts
+  hosts: kiosk
+  become: true
+# Add more plays for other groups/roles as needed
+  roles:
+    - nerdfont
+    - alacritty
+    - chromium
+    - disable-screensaver
+# Add more plays for other groups/roles as needed
