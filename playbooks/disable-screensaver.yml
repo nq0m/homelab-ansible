@@ -1,6 +1,5 @@
----
-# Playbook to disable screensaver and DPMS locally
-- hosts: localhost
+- name: Disable screensaver and DPMS
+  hosts: localhost
   connection: local
   become: true
   tasks:
@@ -25,4 +24,4 @@
           EndSection
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"

@@ -1,6 +1,5 @@
----
-# Playbook to install Nerd Font locally
-- hosts: localhost
+- name: Install Nerd Font
+  hosts: localhost
   connection: local
   become: true
   tasks:
@@ -8,19 +7,19 @@
       ansible.builtin.file:
         path: /usr/local/share/fonts/nerdfonts
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Download DroidSansM Nerd Font
       ansible.builtin.get_url:
         url: https://github.com/ryanoasis/nerd-fonts/releases/latest/download/DroidSansMono.zip
         dest: /tmp/DroidSansMono.zip
-        mode: '0644'
+        mode: "0644"
 
     - name: Unzip DroidSansM Nerd Font
       ansible.builtin.unarchive:
         src: /tmp/DroidSansMono.zip
         dest: /usr/local/share/fonts/nerdfonts/
-        remote_src: yes
+        remote_src: true
         creates: /usr/local/share/fonts/nerdfonts/DroidSansMNerdFontMono-Regular.otf
 
     - name: Rebuild font cache

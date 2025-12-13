@@ -1,6 +1,5 @@
----
-# Playbook to install Chromium and remove Firefox ESR locally
-- hosts: localhost
+- name: Install Chromium and remove Firefox ESR
+  hosts: localhost
   connection: local
   become: true
   tasks:

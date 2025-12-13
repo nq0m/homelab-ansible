@@ -1,6 +1,5 @@
----
-# Playbook to install standard packages on the local machine
-- hosts: localhost
+- name: Install standard packages
+  hosts: localhost
   connection: local
   become: true
   tasks:

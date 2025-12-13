@@ -1,6 +1,5 @@
----
-# Playbook to install and configure Oh My Zsh for the local user
-- hosts: localhost
+- name: Install and configure Oh My Zsh
+  hosts: localhost
   connection: local
   become: true
   vars:
@@ -11,7 +10,7 @@
         name: zsh
         state: present
 
-    - name: Ensure {{ local_user }} uses zsh
+    - name: Ensure user account uses zsh
       ansible.builtin.user:
         name: "{{ local_user }}"
         shell: /usr/bin/zsh
@@ -26,7 +25,7 @@
         path: /home/{{ local_user }}/.oh-my-zsh
       register: stat_oh_my_zsh_result
 
-    - name: OhMyZSH - cloning repo
+    - name: OhMyZSH - cloning repo # noqa: latest
       ansible.builtin.git:
         repo: https://github.com/ohmyzsh/ohmyzsh
         dest: /home/{{ local_user }}/.oh-my-zsh
@@ -36,10 +35,10 @@
       ansible.builtin.copy:
         src: /home/{{ local_user }}/.oh-my-zsh/templates/zshrc.zsh-template
         dest: /home/{{ local_user }}/.zshrc
-        remote_src: yes
+        remote_src: true
         owner: "{{ local_user }}"
         group: "{{ local_user }}"
-        mode: 0644
+        mode: "0644"
       when: not stat_rc_result.stat.exists
 
     - name: Create custom OMZ theme file for {{ local_user }}
@@ -48,4 +47,4 @@
         content: "ZSH_THEME=agnoster\n"
         owner: "{{ local_user }}"
         group: "{{ local_user }}"
-        mode: '0644'
+        mode: "0644"

@@ -1,6 +1,5 @@
----
-# Playbook to install and configure Alacritty locally
-- hosts: localhost
+- name: Install and configure Alacritty
+  hosts: localhost
   connection: local
   become: true
   vars:
@@ -17,7 +16,7 @@
         state: directory
         owner: "{{ local_user }}"
         group: "{{ local_user }}"
-        mode: '0755'
+        mode: "0755"
 
     - name: Configure Alacritty to use Nerd Font (TOML)
       ansible.builtin.template:
@@ -25,7 +24,7 @@
         dest: "/home/{{ local_user }}/.config/alacritty/alacritty.toml"
         owner: "{{ local_user }}"
         group: "{{ local_user }}"
-        mode: '0644'
+        mode: "0644"
 
     - name: Remove old Alacritty YAML config if present
       ansible.builtin.file:
