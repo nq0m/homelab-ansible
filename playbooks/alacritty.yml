@@ -4,7 +4,7 @@
   connection: local
   become: true
   vars:
-    local_user: "{{ lookup('env', 'SUDO_USER') | default(lookup('env', 'USER')) }}""
+    local_user: "{{ ansible_env.SUDO_USER }}"
   tasks:
     - name: Ensure Alacritty is installed
       ansible.builtin.apt:
