@@ -2,7 +2,6 @@
 # Playbook to set up SSH authorized key for the local user
 - hosts: localhost
   connection: local
-  become: true
   vars:
     local_user: "{{ ansible_env.USER }}"
   tasks:
