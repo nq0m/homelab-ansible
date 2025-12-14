@@ -1,0 +1,100 @@
+# Playbook: flrig.yml
+# Description: Skeleton playbook for installing and configuring flrig
+
+- name: Install and configure flrig
+  hosts: local
+  connection: local
+  become: true
+  vars:
+    flrig_version: "2.0.09"
+    flrig_source_url: "https://www.w1hkj.org/files/flrig/flrig-{{ flrig_version }}.tar.gz"
+    # Add any other variables here
+  tasks:
+    - name: Install FLRig build dependencies
+      ansible.builtin.apt:
+        name:
+          - libfltk1.3-dev
+          - libudev-dev
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Download flrig source tarball
+      ansible.builtin.get_url:
+        url: "{{ flrig_source_url }}"
+        dest: "/tmp/flrig-{{ flrig_version }}.tar.gz"
+        mode: '0644'
+      register: flrig_download
+
+    - name: Check for extracted flrig source directory
+      ansible.builtin.stat:
+        path: "/tmp/flrig-{{ flrig_version }}"
+      register: flrig_src_stat
+
+    - name: Extract flrig source tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/flrig-{{ flrig_version }}.tar.gz"
+        dest: "/tmp"
+        remote_src: true
+      when: not flrig_src_stat.stat.exists or flrig_download is changed
+      register: flrig_extract
+
+    - name: Configure flrig build # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: ./configure
+      args:
+        chdir: "/tmp/flrig-{{ flrig_version }}"
+        creates: "/tmp/flrig-{{ flrig_version }}/Makefile"
+      register: flrig_configure
+
+    - name: Build flrig with make # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make {{ parallel_make_flag }}
+      args:
+        chdir: "/tmp/flrig-{{ flrig_version }}"
+        creates: "/tmp/flrig-{{ flrig_version }}/src/flrig"
+      when: flrig_configure is succeeded # noqa: no-handler
+      register: flrig_make
+
+    - name: Check for built flrig binary
+      ansible.builtin.stat:
+        path: "/tmp/flrig-{{ flrig_version }}/src/flrig"
+      register: flrig_built_stat
+
+    - name: Check if flrig installed
+      ansible.builtin.stat:
+        path: "/usr/local/bin/flrig"
+      register: flrig_installed_stat
+
+    - name: Install flrig # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make install
+      args:
+        chdir: "/tmp/flrig-{{ flrig_version }}"
+        creates: "/usr/local/bin/flrig"
+      when:
+        - flrig_built_stat.stat.exists
+        - not flrig_installed_stat.stat.exists
+      become: true
+      register: flrig_install
+
+    - name: Clean up flrig source and tarball
+      ansible.builtin.file:
+        path: "/tmp/flrig-{{ flrig_version }}"
+        state: absent
+      when: flrig_install is succeeded or flrig_installed_stat.stat.exists # noqa: no-handler
+
+    - name: Clean up flrig tarball
+      ansible.builtin.file:
+        path: "/tmp/flrig-{{ flrig_version }}.tar.gz"
+        state: absent
+      when: flrig_install is succeeded or flrig_installed_stat.stat.exists # noqa: no-handler
+
+    - name: Final verification - stat flrig install
+      ansible.builtin.stat:
+        path: "/usr/local/bin/flrig"
+      register: flrig_final_stat
+
+    - name: Final verification - report flrig installation status
+      ansible.builtin.debug:
+        msg: "flrig installed: {{ flrig_final_stat.stat.exists }}"
