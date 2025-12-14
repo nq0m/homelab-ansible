@@ -48,7 +48,7 @@
     - name: Add Homebrew to PATH in .bash_profile if shell is bash
       ansible.builtin.lineinfile:
         path: "/home/{{ ansible_env.USER }}/.bash_profile"
-        line: 'eval "$($(brew --prefix)/bin/brew shellenv)"'
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
         create: true
         mode: '0644'
       when: user_shell == 'bash'
@@ -71,7 +71,7 @@
     - name: Add Homebrew to PATH in homebrew.zsh if oh-my-zsh is present
       ansible.builtin.copy:
         dest: "/home/{{ ansible_env.USER }}/.oh-my-zsh/custom/homebrew.zsh"
-        content: 'eval "$($(brew --prefix)/bin/brew shellenv)"\n'
+        content: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"\n'
         mode: '0644'
       when:
         - user_shell == 'zsh'
@@ -80,7 +80,7 @@
     - name: Add Homebrew to PATH in .zshrc if oh-my-zsh is not present
       ansible.builtin.lineinfile:
         path: "/home/{{ ansible_env.USER }}/.zshrc"
-        line: 'eval "$($(brew --prefix)/bin/brew shellenv)"'
+        line: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
         create: true
         mode: '0644'
       when:
