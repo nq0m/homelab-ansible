@@ -1,5 +1,5 @@
 - name: Install Chromium and remove Firefox ESR
-  hosts: localhost
+  hosts: local
   connection: local
   become: true
   tasks:

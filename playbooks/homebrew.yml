@@ -1,6 +1,6 @@
 ---
 - name: Install Homebrew on Linux
-  hosts: localhost
+  hosts: local
   tasks:
     - name: Ensure dependencies are installed
       become: true

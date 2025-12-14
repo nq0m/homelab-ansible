@@ -1,5 +1,5 @@
 - name: Disable screensaver and DPMS
-  hosts: localhost
+  hosts: local
   connection: local
   become: true
   tasks:

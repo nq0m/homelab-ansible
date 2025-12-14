@@ -1,6 +1,6 @@
 # Playbook to install and configure Vim locally
 - name: Install and configure Vim
-  hosts: localhost
+  hosts: local
   connection: local
   become: true
   tasks:

@@ -1,5 +1,5 @@
 - name: Install Nerd Font
-  hosts: localhost
+  hosts: local
   connection: local
   become: true
   tasks:

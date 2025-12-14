@@ -44,9 +44,9 @@ ansible-galaxy install -r collections/requirements.yml
 2. (Optional) Edit or create a local variable file if needed (see playbook documentation).
 3. Run the desired playbook locally:
 	```sh
-	ansible-playbook -i localhost, -c local playbooks/site.yml
+	ansible-playbook playbooks/site.yml
 	# or for other playbooks:
-	ansible-playbook -i localhost, -c local playbooks/bootstrap.yml
+	ansible-playbook playbooks/bootstrap.yml
 	```
 
 You can run any playbook as needed; each is self-contained and can be executed independently.

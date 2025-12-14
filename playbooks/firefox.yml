@@ -1,5 +1,5 @@
 - name: Remove ESR and install upstream Firefox
-  hosts: localhost
+  hosts: local
   become: true
   tasks:
     - name: Remove firefox-esr if present

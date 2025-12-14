@@ -1,0 +1,74 @@
+# Playbook: fldigi.yml
+# Description: Skeleton playbook for installing and configuring fldigi
+
+- name: Install and configure fldigi
+  hosts: local
+  become: true
+  vars:
+    fldigi_version: "4.2.10"
+    fldigi_source_url: "https://www.w1hkj.org/files/fldigi/fldigi-{{ fldigi_version }}.tar.gz"
+    # Add any other variables here
+  tasks:
+    # Tasks will be added here
+    - name: Install FLDigi build dependencies
+      ansible.builtin.apt:
+        name:
+          - libfltk1.3-dev
+          - libpng-dev
+          - libsamplerate0-dev
+          - libsndfile1-dev
+          - portaudio19-dev
+          - libpulse-dev
+          - libhamlib-dev
+          - libudev-dev
+        state: present
+        update_cache: true
+      become: true
+    # Download fldigi source tarball
+    - name: Download fldigi source tarball
+      ansible.builtin.get_url:
+        url: "{{ fldigi_source_url }}"
+        dest: "/tmp/fldigi-{{ fldigi_version }}.tar.gz"
+        mode: '0644'
+      register: fldigi_download
+    # Extract fldigi source tarball if downloaded
+    - name: Extract fldigi source tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/fldigi-{{ fldigi_version }}.tar.gz"
+        dest: "/tmp"
+        remote_src: true
+      when: fldigi_download is changed # noqa: no-handler
+      register: fldigi_extract
+    # Run configure script if source was extracted
+    - name: Configure fldigi build # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: ./configure --disable-flarq
+        chdir: "/tmp/fldigi-{{ fldigi_version }}"
+      when: fldigi_extract is changed # noqa: no-handler
+      register: fldigi_configure
+    # Build fldigi with make if configure succeeded
+    - name: Build fldigi with make # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make {{ parallel_make_flag }}
+        chdir: "/tmp/fldigi-{{ fldigi_version }}"
+      when: fldigi_configure is succeeded # noqa: no-handler
+      register: fldigi_make
+    # Install fldigi if build was successful
+    - name: Install fldigi # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make install
+        chdir: "/tmp/fldigi-{{ fldigi_version }}"
+      when: fldigi_make is succeeded # noqa: no-handler
+      become: true
+      register: fldigi_install
+    # Clean up source directory and tarball if install succeeded
+    - name: Clean up fldigi source and tarball
+      ansible.builtin.file:
+        path: "/tmp/fldigi-{{ fldigi_version }}"
+        state: absent
+      when: fldigi_install is succeeded # noqa: no-handler
+    - name: Clean up fldigi tarball
+      ansible.builtin.file:
+        path: "/tmp/fldigi-{{ fldigi_version }}.tar.gz"
+        state: absent
+      when: fldigi_install is succeeded # noqa: no-handler

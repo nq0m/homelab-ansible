@@ -1,5 +1,5 @@
 - name: Set up SSH authorized key for local user
-  hosts: localhost
+  hosts: local
   connection: local
   vars:
     local_user: "{{ ansible_env.USER }}"

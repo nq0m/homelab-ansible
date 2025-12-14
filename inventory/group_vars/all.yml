@@ -1,0 +1,3 @@
+---
+# Global group variables for all hosts and playbooks
+parallel_make_flag: "-j4"
