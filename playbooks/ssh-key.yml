@@ -10,4 +10,5 @@
     - name: Set up SSH authorized key # trunk-ignore(ansible-lint/syntax-check)
       ansible.posix.authorized_key:
         user: "{{ local_user }}"
-        key: "{{ ssh_keys }}"
+        key: "{{ item }}"
+      loop: "{{ ssh_keys }}"
