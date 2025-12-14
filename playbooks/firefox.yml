@@ -1,0 +1,50 @@
+- name: Remove ESR and install upstream Firefox
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Remove firefox-esr if present
+      ansible.builtin.apt:
+        name: firefox-esr
+        state: absent
+        purge: true
+
+    - name: Ensure wget is installed
+      ansible.builtin.apt:
+        name: wget
+        state: present
+
+    - name: Create keyrings directory for Mozilla repo
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download Mozilla APT repo signing key
+      ansible.builtin.get_url:
+        url: https://packages.mozilla.org/apt/repo-signing-key.gpg
+        dest: /etc/apt/keyrings/packages.mozilla.org.asc
+        mode: '0644'
+
+    - name: Add Mozilla APT repository (Debian Bookworm and older)
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main"
+        filename: mozilla
+        state: present
+
+    - name: Pin Mozilla repo with high priority
+      ansible.builtin.copy:
+        dest: /etc/apt/preferences.d/mozilla
+        content: |
+          Package: *
+          Pin: origin packages.mozilla.org
+          Pin-Priority: 1000
+        mode: '0644'
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install upstream Firefox
+      ansible.builtin.apt:
+        name: firefox
+        state: present
