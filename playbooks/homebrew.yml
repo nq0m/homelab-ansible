@@ -71,7 +71,7 @@
     - name: Add Homebrew to PATH in homebrew.zsh if oh-my-zsh is present
       ansible.builtin.copy:
         dest: "/home/{{ ansible_env.USER }}/.oh-my-zsh/custom/homebrew.zsh"
-        content: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"\n'
+        content: 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
         mode: '0644'
       when:
         - user_shell == 'zsh'
