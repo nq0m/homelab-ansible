@@ -1,0 +1,101 @@
+# Playbook: flwkey.yml
+# Description: Minimal skeleton playbook for flwkey; fill in tasks as needed
+
+- name: Install and configure flwkey
+  hosts: local
+  connection: local
+  become: true
+  vars:
+    # Example variables (set values when implementing tasks)
+    flwkey_version: "1.2.4"
+    flwkey_source_url: "https://www.w1hkj.org/files/flwkey/flwkey-{{ flwkey_version }}.tar.gz"
+    # Add any other variables here
+  tasks:
+    - name: Install FLWKey build dependency
+      ansible.builtin.apt:
+        name:
+          - libfltk1.3-dev
+        state: present
+        update_cache: true
+      become: true
+
+    - name: Download flwkey source tarball
+      ansible.builtin.get_url:
+        url: "{{ flwkey_source_url }}"
+        dest: "/tmp/flwkey-{{ flwkey_version }}.tar.gz"
+        mode: '0644'
+      register: flwkey_download
+
+    - name: Check for extracted flwkey source directory
+      ansible.builtin.stat:
+        path: "/tmp/flwkey-{{ flwkey_version }}"
+      register: flwkey_src_stat
+
+    - name: Extract flwkey source tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/flwkey-{{ flwkey_version }}.tar.gz"
+        dest: "/tmp"
+        remote_src: true
+      when: not flwkey_src_stat.stat.exists or flwkey_download is changed
+      register: flwkey_extract
+
+    - name: Configure flwkey build # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: ./configure
+      args:
+        chdir: "/tmp/flwkey-{{ flwkey_version }}"
+        creates: "/tmp/flwkey-{{ flwkey_version }}/Makefile"
+      when: flwkey_extract is changed # noqa: no-handler
+      register: flwkey_configure
+
+    - name: Build flwkey with make # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make {{ parallel_make_flag }}
+      args:
+        chdir: "/tmp/flwkey-{{ flwkey_version }}"
+        creates: "/tmp/flwkey-{{ flwkey_version }}/src/flwkey"
+      when: flwkey_configure is succeeded # noqa: no-handler
+      register: flwkey_make
+
+    - name: Check for built flwkey binary
+      ansible.builtin.stat:
+        path: "/tmp/flwkey-{{ flwkey_version }}/src/flwkey"
+      register: flwkey_built_stat
+
+    - name: Check if flwkey installed
+      ansible.builtin.stat:
+        path: "/usr/local/bin/flwkey"
+      register: flwkey_installed_stat
+
+    - name: Install flwkey # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: make install
+      args:
+        chdir: "/tmp/flwkey-{{ flwkey_version }}"
+        creates: "/usr/local/bin/flwkey"
+      when:
+        - flwkey_built_stat.stat.exists
+        - not flwkey_installed_stat.stat.exists
+      become: true
+      register: flwkey_install
+
+    - name: Clean up flwkey source and tarball
+      ansible.builtin.file:
+        path: "/tmp/flwkey-{{ flwkey_version }}"
+        state: absent
+      when: flwkey_install is succeeded or flwkey_installed_stat.stat.exists # noqa: no-handler
+
+    - name: Clean up flwkey tarball
+      ansible.builtin.file:
+        path: "/tmp/flwkey-{{ flwkey_version }}.tar.gz"
+        state: absent
+      when: flwkey_install is succeeded or flwkey_installed_stat.stat.exists # noqa: no-handler
+
+    - name: Final verification - stat flwkey install
+      ansible.builtin.stat:
+        path: "/usr/local/bin/flwkey"
+      register: flwkey_final_stat
+
+    - name: Final verification - report flwkey installation status
+      ansible.builtin.debug:
+        msg: "flwkey installed: {{ flwkey_final_stat.stat.exists }}"
