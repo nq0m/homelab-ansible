@@ -1,0 +1,88 @@
+---
+- name: Install Homebrew on Linux
+  hosts: localhost
+  tasks:
+    - name: Ensure dependencies are installed
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - procps
+          - curl
+          - file
+          - git
+        state: present
+        update_cache: true
+
+    - name: Check if Homebrew is already installed
+      ansible.builtin.stat:
+        path: /home/linuxbrew/.linuxbrew/bin/brew
+      register: brew_stat
+
+    - name: Install Homebrew
+      become: false
+      ansible.builtin.shell: |
+        set -o pipefail
+        yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/brew
+      when: not brew_stat.stat.exists
+
+
+    - name: Ensure Homebrew is up to date # noqa: no-changed-when
+      become: false
+      ansible.builtin.command: brew update
+      environment:
+        PATH: /home/linuxbrew/.linuxbrew/bin:{{ ansible_env.PATH }}
+      when: brew_stat.stat.exists
+
+    - name: Get user's shell
+      ansible.builtin.user:
+        name: "{{ ansible_env.USER }}"
+      register: user_info
+
+    - name: Set shell variable
+      ansible.builtin.set_fact:
+        user_shell: "{{ user_info.user.shell | basename }}"
+
+    - name: Add Homebrew to PATH in .bash_profile if shell is bash
+      ansible.builtin.lineinfile:
+        path: "/home/{{ ansible_env.USER }}/.bash_profile"
+        line: 'eval "$($(brew --prefix)/bin/brew shellenv)"'
+        create: true
+        mode: '0644'
+      when: user_shell == 'bash'
+
+    - name: Check for oh-my-zsh directory if shell is zsh
+      ansible.builtin.stat:
+        path: "/home/{{ ansible_env.USER }}/.oh-my-zsh"
+      register: ohmyzsh_dir
+      when: user_shell == 'zsh'
+
+    - name: Ensure custom directory exists for oh-my-zsh
+      ansible.builtin.file:
+        path: "/home/{{ ansible_env.USER }}/.oh-my-zsh/custom"
+        state: directory
+        mode: '0755'
+      when:
+        - user_shell == 'zsh'
+        - ohmyzsh_dir.stat.exists
+
+    - name: Add Homebrew to PATH in homebrew.zsh if oh-my-zsh is present
+      ansible.builtin.copy:
+        dest: "/home/{{ ansible_env.USER }}/.oh-my-zsh/custom/homebrew.zsh"
+        content: 'eval "$($(brew --prefix)/bin/brew shellenv)"\n'
+        mode: '0644'
+      when:
+        - user_shell == 'zsh'
+        - ohmyzsh_dir.stat.exists
+
+    - name: Add Homebrew to PATH in .zshrc if oh-my-zsh is not present
+      ansible.builtin.lineinfile:
+        path: "/home/{{ ansible_env.USER }}/.zshrc"
+        line: 'eval "$($(brew --prefix)/bin/brew shellenv)"'
+        create: true
+        mode: '0644'
+      when:
+        - user_shell == 'zsh'
+        - not ohmyzsh_dir.stat.exists
