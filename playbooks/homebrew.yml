@@ -43,7 +43,7 @@
 
     - name: Set shell variable
       ansible.builtin.set_fact:
-        user_shell: "{{ user_info.user.shell | basename }}"
+        user_shell: "{{ user_info.shell | basename }}"
 
     - name: Add Homebrew to PATH in .bash_profile if shell is bash
       ansible.builtin.lineinfile:
