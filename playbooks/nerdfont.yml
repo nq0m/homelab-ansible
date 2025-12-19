@@ -9,11 +9,22 @@
         state: directory
         mode: "0755"
 
+    - name: Ensure fontconfig and unzip are installed
+      ansible.builtin.apt:
+        name:
+          - fontconfig
+          - unzip
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['fonts', 'dependencies']
+
     - name: Download DroidSansM Nerd Font
       ansible.builtin.get_url:
         url: https://github.com/ryanoasis/nerd-fonts/releases/latest/download/DroidSansMono.zip
         dest: /tmp/DroidSansMono.zip
         mode: "0644"
+      tags: ['fonts', 'download']
 
     - name: Unzip DroidSansM Nerd Font
       ansible.builtin.unarchive:
@@ -21,7 +32,9 @@
         dest: /usr/local/share/fonts/nerdfonts/
         remote_src: true
         creates: /usr/local/share/fonts/nerdfonts/DroidSansMNerdFontMono-Regular.otf
+      tags: ['fonts', 'install']
 
     - name: Rebuild font cache
       ansible.builtin.command: fc-cache -f -v
       changed_when: false
+      tags: ['fonts', 'install']

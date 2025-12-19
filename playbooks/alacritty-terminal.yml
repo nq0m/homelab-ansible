@@ -9,6 +9,9 @@
       ansible.builtin.apt:
         name: alacritty
         state: present
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'alacritty']
 
     - name: Ensure Alacritty config directory exists
       ansible.builtin.file:

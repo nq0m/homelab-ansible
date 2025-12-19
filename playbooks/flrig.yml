@@ -6,8 +6,10 @@
   connection: local
   become: true
   vars:
-    flrig_version: "2.0.09"
+    flrig_version: "2.0.10"
     flrig_source_url: "https://www.w1hkj.org/files/flrig/flrig-{{ flrig_version }}.tar.gz"
+    flrig_checksum: "sha256:6a5f2b87d4fffed410a35b3a176b5d04e60ed4de3fda545079f3656e42ef42bd"
+    install_prefix: "/usr/local"
     # Add any other variables here
   tasks:
     - name: Install FLRig build dependencies
@@ -17,14 +19,24 @@
           - libudev-dev
         state: present
         update_cache: true
+        cache_valid_time: 3600
       become: true
+      tags: ['pkg', 'flrig']
+
+    - name: Check if flrig is already installed
+      ansible.builtin.stat:
+        path: "{{ install_prefix }}/bin/flrig"
+      register: flrig_installed_stat
 
     - name: Download flrig source tarball
       ansible.builtin.get_url:
         url: "{{ flrig_source_url }}"
         dest: "/tmp/flrig-{{ flrig_version }}.tar.gz"
         mode: '0644'
+        checksum: "{{ flrig_checksum | default(omit) }}"
       register: flrig_download
+      when: not flrig_installed_stat.stat.exists
+      tags: ['flrig', 'download']
 
     - name: Check for extracted flrig source directory
       ansible.builtin.stat:
@@ -71,7 +83,7 @@
         cmd: make install
       args:
         chdir: "/tmp/flrig-{{ flrig_version }}"
-        creates: "/usr/local/bin/flrig"
+        creates: "{{ install_prefix }}/bin/flrig"
       when:
         - flrig_built_stat.stat.exists
         - not flrig_installed_stat.stat.exists

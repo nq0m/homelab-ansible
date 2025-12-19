@@ -8,6 +8,9 @@
       ansible.builtin.apt:
         name: vim
         state: present
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'vim']
 
     - name: Ensure vim disables mouse in vimrc.local
       ansible.builtin.lineinfile:

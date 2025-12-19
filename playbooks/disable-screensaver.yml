@@ -7,6 +7,9 @@
       ansible.builtin.apt:
         name: xscreensaver
         state: absent
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'xscreensaver']
 
     - name: Disable DPMS and screen blanking in X11
       ansible.builtin.copy:

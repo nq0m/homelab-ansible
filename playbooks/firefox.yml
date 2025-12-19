@@ -7,11 +7,17 @@
         name: firefox-esr
         state: absent
         purge: true
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'firefox']
 
     - name: Ensure wget is installed
       ansible.builtin.apt:
         name: wget
         state: present
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'wget']
 
     - name: Create keyrings directory for Mozilla repo
       ansible.builtin.file:
@@ -24,7 +30,8 @@
         url: https://packages.mozilla.org/apt/repo-signing-key.gpg
         dest: /etc/apt/keyrings/packages.mozilla.org.asc
         mode: '0644'
-
+        checksum: "{{ mozilla_key_checksum | default(omit) }}"
+      tags: ['pkg', 'firefox']
 
     - name: Add Mozilla deb822-style repository (Debian 13+)
       ansible.builtin.copy:

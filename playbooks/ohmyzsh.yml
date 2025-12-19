@@ -9,6 +9,9 @@
       ansible.builtin.apt:
         name: zsh
         state: present
+        update_cache: true
+        cache_valid_time: 3600
+      tags: ['pkg', 'ohmyzsh']
 
     - name: Ensure user account uses zsh
       ansible.builtin.user:

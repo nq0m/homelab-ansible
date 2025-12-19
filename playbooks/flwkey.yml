@@ -9,6 +9,8 @@
     # Example variables (set values when implementing tasks)
     flwkey_version: "1.2.4"
     flwkey_source_url: "https://www.w1hkj.org/files/flwkey/flwkey-{{ flwkey_version }}.tar.gz"
+    flwkey_checksum: "sha256:e36e86788d7543261cd8f809b4e127d62df5578a39660353c0c0e6d1a4f7c09d"
+    install_prefix: "/usr/local"
     # Add any other variables here
   tasks:
     - name: Install FLWKey build dependency
@@ -17,20 +19,29 @@
           - libfltk1.3-dev
         state: present
         update_cache: true
+        cache_valid_time: 3600
       become: true
+      tags: ['pkg', 'flwkey']
+
+    - name: Check if flwkey is already installed
+      ansible.builtin.stat:
+        path: "{{ install_prefix }}/bin/flwkey"
+      register: flwkey_installed_stat
 
     - name: Download flwkey source tarball
       ansible.builtin.get_url:
         url: "{{ flwkey_source_url }}"
         dest: "/tmp/flwkey-{{ flwkey_version }}.tar.gz"
         mode: '0644'
+        checksum: "{{ flwkey_checksum | default(omit) }}"
       register: flwkey_download
+      when: not flwkey_installed_stat.stat.exists
+      tags: ['flwkey', 'download']
 
     - name: Check for extracted flwkey source directory
       ansible.builtin.stat:
         path: "/tmp/flwkey-{{ flwkey_version }}"
       register: flwkey_src_stat
-
     - name: Extract flwkey source tarball
       ansible.builtin.unarchive:
         src: "/tmp/flwkey-{{ flwkey_version }}.tar.gz"
@@ -72,7 +83,7 @@
         cmd: make install
       args:
         chdir: "/tmp/flwkey-{{ flwkey_version }}"
-        creates: "/usr/local/bin/flwkey"
+        creates: "{{ install_prefix }}/bin/flwkey"
       when:
         - flwkey_built_stat.stat.exists
         - not flwkey_installed_stat.stat.exists

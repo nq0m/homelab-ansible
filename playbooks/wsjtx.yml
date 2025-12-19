@@ -1,0 +1,139 @@
+# Playbook: wsjtx.yml
+# Description: Skeleton playbook for installing and configuring WSJT-X
+
+- name: Install and configure WSJT-X
+  hosts: local
+  become: true
+  vars:
+    wsjtx_version: "2.7.0"
+    # Source tarball URL for WSJT-X (constructed from wsjtx_version)
+    wsjtx_source_url: "https://sourceforge.net/projects/wsjt/files/wsjtx-{{ wsjtx_version }}/wsjtx-{{ wsjtx_version }}.tgz"
+    # Optional checksum variable (omit if not set)
+    wsjtx_checksum: "sha256:3788f5df636af792514609ec2b4abe58477aa5f0ad32cb826424866fc21cec93"
+    install_prefix: "/usr/local"
+    cmake_options: "-DWSJT_SKIP_MANPAGES=ON -DWSJT_GENERATE_DOCS=OFF -DCMAKE_INSTALL_PREFIX={{ install_prefix }}"
+    # Use CMake to drive the build; pass a numeric parallel jobs count to CMake (avoid shell expansion)
+    # Prefer CMake's --parallel and fall back to 1 if facts are unavailable
+    parallel_make_flag: "--parallel {{ ansible_processor_vcpus | default(ansible_processor_count | default(1)) }}"
+    build_dir: "/tmp/wsjtx-build"
+  tasks:
+    - name: Ensure build dependencies are installed
+      ansible.builtin.apt:
+        name:
+          - cmake
+          - libusb-1.0-0-dev
+          - gfortran
+          - libboost-all-dev
+          - libfftw3-dev
+          - qtbase5-dev
+          - qttools5-dev
+          - libqt5serialport5-dev
+          - qtmultimedia5-dev
+          - libqt5multimedia5-plugins
+          - libqt5sql5-sqlite
+          - libudev-dev
+          - g++
+          - patch
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      become: true
+      tags: ['pkg', 'build']
+
+    - name: Check for installed WSJT-X
+      ansible.builtin.command:
+        cmd: "{{ install_prefix }}/bin/wsjtx --version"
+      register: wsjtx_current
+      failed_when: false
+      changed_when: false
+      tags: ['wsjtx', 'check']
+
+    - name: Download WSJT-X source tarball
+      ansible.builtin.get_url:
+        url: "{{ wsjtx_source_url }}"
+        dest: "/tmp/wsjtx-{{ wsjtx_version }}.tar.gz"
+        mode: '0644'
+        checksum: "{{ wsjtx_checksum | default(omit) }}"
+      register: wsjtx_download
+      when: wsjtx_current.rc != 0 or (wsjtx_current.stdout is defined and wsjtx_version not in wsjtx_current.stdout)
+      tags: ['wsjtx', 'download']
+
+    - name: Check for extracted WSJT-X source directory
+      ansible.builtin.stat:
+        path: "/tmp/wsjtx-{{ wsjtx_version }}"
+      register: wsjtx_src_stat
+
+    - name: Extract WSJT-X source tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/wsjtx-{{ wsjtx_version }}.tar.gz"
+        dest: "/tmp"
+        remote_src: true
+      when: not wsjtx_src_stat.stat.exists or wsjtx_download is changed
+      register: wsjtx_extract
+      tags: ['wsjtx', 'extract']
+
+    - name: Create build directory
+      ansible.builtin.file:
+        path: "{{ build_dir }}"
+        state: directory
+        mode: '0755'
+      tags: ['wsjtx', 'build']
+
+    - name: Configure WSJT-X build with CMake # noqa: no-handler
+      ansible.builtin.command:
+        cmd: cmake {{ cmake_options }} ../wsjtx-{{ wsjtx_version }}
+        chdir: "{{ build_dir }}"
+      args:
+        creates: "{{ build_dir }}/CMakeCache.txt"
+      when: wsjtx_extract is changed
+      register: wsjtx_configure
+      tags: ['wsjtx', 'configure']
+
+    - name: Build WSJT-X # noqa: no-changed-when
+      ansible.builtin.command:
+        cmd: cmake --build . {{ parallel_make_flag }}
+        chdir: "{{ build_dir }}"
+      when: wsjtx_configure is succeeded
+      register: wsjtx_make
+      tags: ['wsjtx', 'build']
+
+    - name: Check if WSJT-X is installed
+      ansible.builtin.stat:
+        path: "{{ install_prefix }}/bin/wsjtx"
+      register: wsjtx_installed_stat
+
+    - name: Install WSJT-X
+      ansible.builtin.command:
+        cmd: cmake --build . --target install
+        chdir: "{{ build_dir }}"
+      args:
+        creates: "{{ install_prefix }}/bin/wsjtx"
+      when:
+        - wsjtx_make is succeeded
+        - not wsjtx_installed_stat.stat.exists
+      become: true
+      register: wsjtx_install
+      tags: ['wsjtx', 'install']
+
+    - name: Clean up source directory
+      ansible.builtin.file:
+        path: "/tmp/wsjtx-{{ wsjtx_version }}"
+        state: absent
+      when: wsjtx_install is succeeded or wsjtx_installed_stat.stat.exists
+
+    - name: Clean up source tarball
+      ansible.builtin.file:
+        path: "/tmp/wsjtx-{{ wsjtx_version }}.tar.gz"
+        state: absent
+      when: wsjtx_install is succeeded or wsjtx_installed_stat.stat.exists
+
+    - name: Final verification - stat wsjtx install
+      ansible.builtin.stat:
+        path: "{{ install_prefix }}/bin/wsjtx"
+      register: wsjtx_final_stat
+
+    - name: Final verification - report wsjtx installation status
+      ansible.builtin.debug:
+        msg: "wsjtx installed: {{ wsjtx_final_stat.stat.exists }}"
+      tags: ['wsjtx', 'verify']
