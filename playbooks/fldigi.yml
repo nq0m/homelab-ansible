@@ -5,9 +5,9 @@
   hosts: local
   become: true
   vars:
-    fldigi_version: "4.2.10"
+    fldigi_version: "4.2.11"
     fldigi_source_url: "https://www.w1hkj.org/files/fldigi/fldigi-{{ fldigi_version }}.tar.gz"
-    fldigi_checksum: "sha256:e08f894ac0f9d78ddc520f701e20ecb319dec5a7f8d444d77edd51d96e16a85d"
+    fldigi_checksum: "sha256:762b370ffe9cae773a2a03b512d0b7242e7e90407c11d5abbd2d31ae6501664f"
     install_prefix: "/usr/local"
     # Add any other variables here
   tasks:
